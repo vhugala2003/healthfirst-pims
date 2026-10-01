@@ -1,0 +1,21 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: healthfirst-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: local_dev_only
+      MYSQL_DATABASE: healthfirst_pims
+    ports:
+      - "3306:3306"
+    volumes:
+      - healthfirst_mysql_data:/var/lib/mysql
+      - ./database.sql:/docker-entrypoint-initdb.d/01-healthfirst.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-plocal_dev_only"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  healthfirst_mysql_data:
